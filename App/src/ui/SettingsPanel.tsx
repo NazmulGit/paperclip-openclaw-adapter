@@ -755,6 +755,16 @@ export function SettingsPanel(_props: PluginSettingsPageProps): React.ReactEleme
         dot={savedSorted.length > 0 ? "ok" : "neutral"}
         actions={<span className="text-xs text-muted-foreground">{savedSorted.length} active</span>}
       >
+        {savedSorted.length > 0 ? (
+          <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+            URL, token, session strategy, and timeout are auto-filled by the bridge on sync. For
+            per-agent overrides (model, scopes, payload template), open the agent at{" "}
+            <code className="font-mono text-[11px]">
+              /&lt;prefix&gt;/agents/&lt;name&gt;/dashboard
+            </code>
+            {" "}— all 12 OpenClaw Gateway fields are available there.
+          </p>
+        ) : null}
         {savedSorted.length === 0 ? (
           <div className="rounded-md border border-dashed border-border bg-muted/30 px-4 py-6 text-center">
             <div className="text-sm text-muted-foreground">No bindings yet.</div>
