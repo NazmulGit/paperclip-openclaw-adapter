@@ -1,0 +1,22 @@
+{
+  "name": "paperclip_adapter_for_opencalw",
+  "version": "0.1.0",
+  "description": "Paperclip adapter for OpenClaw. Registers a paperclip.* tool family so OC agents can comment, close, and create Paperclip issues without raw fetch boilerplate.",
+  "type": "module",
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "openclaw.plugin.json",
+    "skills"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  },
+  "openclaw": {
+    "pluginManifest": "./openclaw.plugin.json"
+  }
+}

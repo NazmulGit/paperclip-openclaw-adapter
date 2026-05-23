@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets.json
+
+# Test artifacts
+coverage/
+.nyc_output/
+.vitest/
+
+# Local-only state
+.paperclip/
+.openclaw/
+.openclaw-dev/
+
+# Upstream clones (read-only mirrors of upstream repos — too big to commit)
+Upstream/
+
+# Local screenshots and notes
+Others/screenshots/
+*.local.md
+
+# Tarballs left over from packaging experiments (we publish via Release/)
+*.tgz

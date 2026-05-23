@@ -1,0 +1,58 @@
+{
+  "id": "paperclip-bridge",
+  "name": "Paperclip Bridge",
+  "description": "Lets OpenClaw agents report progress, post comments, and create issues in Paperclip without writing raw fetch boilerplate. Pairs with paperclip-plugin-openclaw-bridge on the Paperclip side.",
+  "activation": {
+    "onStartup": true
+  },
+  "contracts": {
+    "tools": ["paperclip"]
+  },
+  "toolMetadata": {
+    "paperclip": {
+      "optional": true
+    }
+  },
+  "skills": ["./skills"],
+  "uiHints": {
+    "baseUrl": {
+      "label": "Paperclip Base URL",
+      "help": "Where to reach the Paperclip API. Default: http://127.0.0.1:3100"
+    },
+    "apiKey": {
+      "label": "Paperclip API Key",
+      "help": "Long-lived Paperclip agent API key. The paperclip-plugin-openclaw-bridge's 'Bootstrap PC credentials' button generates one per agent; paste the value that corresponds to THIS OpenClaw instance."
+    },
+    "defaultCompanyId": {
+      "label": "Default Company ID",
+      "help": "If set, paperclip.* tool calls that don't pass companyId use this. Saves the agent from having to know it."
+    },
+    "defaultAgentId": {
+      "label": "Default Agent ID",
+      "help": "If set, the tool tags activity as coming from this Paperclip agent."
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["baseUrl"],
+    "properties": {
+      "baseUrl": {
+        "type": "string",
+        "format": "uri",
+        "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://",
+        "default": "http://127.0.0.1:3100"
+      },
+      "apiKey": {
+        "type": "string",
+        "minLength": 16
+      },
+      "defaultCompanyId": {
+        "type": "string"
+      },
+      "defaultAgentId": {
+        "type": "string"
+      }
+    }
+  }
+}

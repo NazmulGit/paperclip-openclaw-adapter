@@ -1,0 +1,7 @@
+{
+  "id": "paperclip",
+  "name": "Paperclip",
+  "description": "Comment on, update, or open Paperclip issues from inside an OpenClaw session.",
+  "entry": "SKILL.md",
+  "tools": ["paperclip"]
+}
