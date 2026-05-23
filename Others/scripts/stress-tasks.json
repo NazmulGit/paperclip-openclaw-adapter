@@ -1,0 +1,52 @@
+[
+  {
+    "idx": 1,
+    "title": "real-1 read TES company info",
+    "prompt": "Use Paperclip API: GET /api/companies/78678df7-e2c2-4bea-9503-67300871acb9. Report the company name and issuePrefix as a comment. Then set status to done."
+  },
+  {
+    "idx": 2,
+    "title": "real-2 list open issues",
+    "prompt": "GET /api/companies/78678df7-e2c2-4bea-9503-67300871acb9/issues?status=todo,in_progress and report how many open issues exist plus list their titles in one comment. Then set status to done."
+  },
+  {
+    "idx": 3,
+    "title": "real-3 fibonacci 15",
+    "prompt": "Compute the 15th Fibonacci number (F0=0, F1=1, so F15=610). Post the answer in one comment formatted as: 'F(15) = <number>'. Then set status to done."
+  },
+  {
+    "idx": 4,
+    "title": "real-4 reverse-string code",
+    "prompt": "Write a Python function reverse(s: str) -> str that returns the reverse of s WITHOUT using slicing (no s[::-1] and no reversed()). Post the source code in a comment inside a python code fence. Then set status to done."
+  },
+  {
+    "idx": 5,
+    "title": "real-5 list local files",
+    "prompt": "Run a shell command to list 5 entries in ~/Documents (or %USERPROFILE%\\Documents on Windows). Post just the names in a comment. Then set status to done."
+  },
+  {
+    "idx": 6,
+    "title": "real-6 system info",
+    "prompt": "Run two shell commands: 'node --version' and 'echo OS=%OS%' (or 'uname -s' on Linux). Post the two outputs in a comment. Then set status to done."
+  },
+  {
+    "idx": 7,
+    "title": "real-7 fetch example.com",
+    "prompt": "Fetch https://example.com using curl or any HTTP client you have. Extract the page TITLE (between <title> and </title>). Post the title text in a comment. Then set status to done."
+  },
+  {
+    "idx": 8,
+    "title": "real-8 prime check",
+    "prompt": "Of these numbers: 17, 24, 31, 42, 53 — which ones are prime? Post the list of primes in a comment, sorted ascending. Then set status to done."
+  },
+  {
+    "idx": 9,
+    "title": "real-9 SQL injection explain",
+    "prompt": "Explain in one comment (3 short sentences max) what SQL injection is and how parameterized queries prevent it. Then set status to done."
+  },
+  {
+    "idx": 10,
+    "title": "real-10 identity check",
+    "prompt": "GET /api/agents/me using your PAPERCLIP_API_KEY. Post your agent name and id in a comment. Then set status to done."
+  }
+]
