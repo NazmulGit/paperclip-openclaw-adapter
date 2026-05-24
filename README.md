@@ -67,6 +67,8 @@ Plus a `SKILL.md` so OC agents know when and how to call the tool. Scaffold-only
 
 Source: [`OpenClawPlugin/`](OpenClawPlugin/) · Release: [`Release/paperclip_adapter_for_opencalw/`](Release/paperclip_adapter_for_opencalw/)
 
+**Canonical repo for the OC side:** https://github.com/NazmulGit/paperclip-adapter-for-opencalw — published as its own GitHub repo so OpenClaw users can find it via OC-side search. The `OpenClawPlugin/` folder here is the vendored copy used during co-development; both stay in sync at release time.
+
 ## Quick install (5 minutes)
 
 ```powershell
