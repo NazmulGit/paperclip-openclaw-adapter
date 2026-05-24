@@ -9,6 +9,7 @@ import {
   DATA_COMPANY_BINDING,
   DATA_GATEWAY_CONFIG,
   DATA_OPENCLAW_AGENTS,
+  DATA_OPENCLAW_MODELS,
   DATA_OPENCLAW_WORKSPACES,
   DATA_SYNC_STATUS,
   PLUGIN_ID,
@@ -60,6 +61,15 @@ export function registerData(deps: DataDeps): void {
         error: err instanceof Error ? err.message : String(err),
       };
     }
+  });
+
+  ctx.data.register(DATA_OPENCLAW_MODELS, async () => {
+    if (!openclaw.isOpen()) {
+      openclaw.ensureConnecting();
+      return { connected: false, models: [] as string[] };
+    }
+    const models = await openclaw.listAvailableModels();
+    return { connected: true, models };
   });
 
   ctx.data.register(DATA_OPENCLAW_WORKSPACES, async () => {
@@ -179,6 +189,7 @@ export function registerData(deps: DataDeps): void {
       conflictPolicy: cfg.conflictPolicy,
       autoSyncCron: cfg.autoSyncCron,
       healthCheckCron: cfg.healthCheckCron,
+      paperclipApiUrl: cfg.paperclipApiUrl ?? "http://127.0.0.1:3100",
     };
   });
 }

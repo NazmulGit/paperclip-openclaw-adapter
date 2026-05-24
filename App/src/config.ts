@@ -39,6 +39,10 @@ export function normalizeConfig(raw: unknown): BridgeConfig {
     healthCheckCron: typeof obj.healthCheckCron === "string" && obj.healthCheckCron.length > 0
       ? obj.healthCheckCron
       : DEFAULT_CONFIG.healthCheckCron,
+    paperclipApiUrl:
+      typeof obj.paperclipApiUrl === "string" && /^https?:\/\//.test(obj.paperclipApiUrl)
+        ? obj.paperclipApiUrl
+        : DEFAULT_CONFIG.paperclipApiUrl,
   };
 }
 

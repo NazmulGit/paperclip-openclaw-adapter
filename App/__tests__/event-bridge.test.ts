@@ -26,9 +26,12 @@ function makeOpenClawStub() {
 function makeCtxStub(opts: {
   agentLookup?: (agentId: string) => Agent | null;
   issueLookup?: (issueId: string) => Issue | null;
+  /** Companies that have an enabled bridge binding. Defaults to ["c1"]. */
+  boundCompanyIds?: string[];
 } = {}) {
   const eventHandlers = new Map<string, Array<(e: PluginEvent) => void | Promise<void>>>();
   const comments: Array<{ issueId: string; body: string }> = [];
+  const boundIds = new Set(opts.boundCompanyIds ?? ["c1"]);
   const ctx = {
     agents: {
       get: vi.fn(async (agentId: string) => opts.agentLookup?.(agentId) ?? null),
@@ -45,6 +48,15 @@ function makeCtxStub(opts: {
         if (!eventHandlers.has(event)) eventHandlers.set(event, []);
         eventHandlers.get(event)!.push(fn);
         return () => eventHandlers.get(event)?.splice(eventHandlers.get(event)!.indexOf(fn), 1);
+      }),
+    },
+    // EventBridge.isBound reads company-scoped state.
+    state: {
+      get: vi.fn(async (key: { scopeKind: string; scopeId?: string; stateKey: string }) => {
+        if (key.stateKey === "binding" && key.scopeId && boundIds.has(key.scopeId)) {
+          return { enabled: true };
+        }
+        return null;
       }),
     },
     logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
@@ -153,7 +165,9 @@ describe("EventBridge — OpenClaw → Paperclip", () => {
     await bridge.onOpenClawAgentEvent({
       type: "text_done",
       text: "I finished the task",
-      context: { paperclipIssueId: "iss_42" },
+      // EventBridge requires `paperclipCompanyId` to look up the binding —
+      // without it the event is skipped (not routed to a Paperclip company).
+      context: { paperclipIssueId: "iss_42", paperclipCompanyId: "c1" },
     });
     expect(comments).toEqual([{ issueId: "iss_42", body: "I finished the task" }]);
   });
@@ -166,7 +180,7 @@ describe("EventBridge — OpenClaw → Paperclip", () => {
       type: "tool_call",
       name: "browser_open",
       params: { url: "https://x" },
-      context: { paperclipIssueId: "iss_42" },
+      context: { paperclipIssueId: "iss_42", paperclipCompanyId: "c1" },
     });
     expect(comments).toHaveLength(1);
     expect(comments[0]!.body).toContain("tool: browser_open");
@@ -178,6 +192,18 @@ describe("EventBridge — OpenClaw → Paperclip", () => {
     const { ctx, comments } = makeCtxStub();
     const bridge = new EventBridge({ ctx, openclaw: oc.client as never, config });
     await bridge.onOpenClawAgentEvent({ type: "text_done", text: "x" });
+    expect(comments).toEqual([]);
+  });
+
+  it("ignores OpenClaw events whose paperclipCompanyId isn't bound to the bridge", async () => {
+    const oc = makeOpenClawStub();
+    const { ctx, comments } = makeCtxStub({ boundCompanyIds: ["other"] });
+    const bridge = new EventBridge({ ctx, openclaw: oc.client as never, config });
+    await bridge.onOpenClawAgentEvent({
+      type: "text_done",
+      text: "shouldn't post",
+      context: { paperclipIssueId: "iss_42", paperclipCompanyId: "c1" },
+    });
     expect(comments).toEqual([]);
   });
 });

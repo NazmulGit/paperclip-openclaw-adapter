@@ -208,13 +208,17 @@ export class AgentSync {
     // Fall back to "default" if the server didn't expose one (shouldn't
     // happen on modern OpenClaw but the fallback keeps us defensive).
     const workspace = mainKey ?? "default";
+    // Pick a model the gateway actually supports. Prefer an existing
+    // OC agent's primary model (so new agents inherit the operator's choice);
+    // fall back to a flagship Claude id when the roster is empty.
+    const model = pickPreferredModel(openclawAgents);
     for (const action of actions) {
       if (action.kind !== "export-to-openclaw") continue;
       try {
         await this.oc.rpc("agents.create", {
           name: action.paperclip.name,
           workspace,
-          model: "anthropic:claude-opus-4-7",
+          model,
         });
         exportedToOpenClaw.push(action.paperclip.name);
         markReconciled(rows, action.name, this.now());
@@ -518,6 +522,34 @@ export class AgentSync {
       // state writes during error reporting should never throw
     }
   }
+}
+
+/**
+ * Pick the model to use when exporting Paperclip-only agents into OpenClaw.
+ * Strategy:
+ *   1. If any existing OC agent already advertises a model, use the
+ *      most-popular one (operator has clearly endorsed it).
+ *   2. Otherwise fall back to a flagship Claude id so the new agent is at
+ *      least usable out of the box.
+ *
+ * Exported for unit testing.
+ */
+export function pickPreferredModel(roster: OpenClawAgentRecord[]): string {
+  const counts = new Map<string, number>();
+  for (const a of roster) {
+    if (typeof a.model === "string" && a.model.length > 0) {
+      counts.set(a.model, (counts.get(a.model) ?? 0) + 1);
+    }
+  }
+  let best: string | null = null;
+  let bestCount = 0;
+  for (const [model, n] of counts) {
+    if (n > bestCount) {
+      best = model;
+      bestCount = n;
+    }
+  }
+  return best ?? "anthropic:claude-opus-4-7";
 }
 
 function markReconciled(rows: SyncStatusSnapshot["rows"], name: string, at: number): void {

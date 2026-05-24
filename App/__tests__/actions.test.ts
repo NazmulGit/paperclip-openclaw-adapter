@@ -6,6 +6,7 @@ import {
   ACTION_RUN_SYNC,
   ACTION_TEST_CONNECTION,
   DATA_OPENCLAW_AGENTS,
+  DATA_OPENCLAW_MODELS,
   DATA_SYNC_STATUS,
 } from "../src/manifest.js";
 import type { BridgeConfig, SyncStatusSnapshot } from "../src/types.js";
@@ -39,21 +40,37 @@ const cfg: BridgeConfig = {
 
 describe("registerActions", () => {
   it("run-sync invokes AgentSync.fullSync and returns the result shape", async () => {
-    const sync = { fullSync: vi.fn(async () => ({ rows: [], actions: [], exportedToOpenClaw: ["x"], exportFailures: [] })) };
+    const sync = {
+      readBinding: vi.fn(async () => null),
+      fullSync: vi.fn(async () => ({
+        companyId: "c1",
+        rows: [],
+        actions: [],
+        exportedToOpenClaw: ["x"],
+        exportFailures: [],
+        importedToPaperclip: [],
+        importFailures: [],
+      })),
+    };
     const oc = { isOpen: () => true, ping: vi.fn(async () => ({ ok: true })) };
     const { ctx, actionHandlers } = makeCtxStub();
     registerActions({ ctx, openclaw: oc as never, sync: sync as never, config: () => cfg });
 
     const handler = actionHandlers.get(ACTION_RUN_SYNC);
     expect(handler).toBeDefined();
-    const result = (await handler!({})) as { ok: boolean; rowCount: number; exported: string[] };
+    // run-sync now takes an explicit companyId param (multi-company bindings).
+    const result = (await handler!({ companyId: "c1" })) as {
+      ok: boolean;
+      rowCount: number;
+      exported: string[];
+    };
     expect(result.ok).toBe(true);
     expect(result.exported).toEqual(["x"]);
     expect(sync.fullSync).toHaveBeenCalledTimes(1);
   });
 
-  it("run-sync surfaces an error when no companyId is configured", async () => {
-    const sync = { fullSync: vi.fn() };
+  it("run-sync surfaces an error when no companyId is provided and syncAll is off", async () => {
+    const sync = { fullSync: vi.fn(), syncAllBound: vi.fn() };
     const oc = { isOpen: () => true, ping: vi.fn() };
     const { ctx, actionHandlers } = makeCtxStub();
     registerActions({
@@ -96,18 +113,21 @@ describe("registerData", () => {
   });
 
   it("openclaw-agents returns connected:false when ws is down", async () => {
-    const oc = { isOpen: () => false, rpc: vi.fn() };
+    const oc = { isOpen: () => false, rpc: vi.fn(), ensureConnecting: vi.fn() };
     const { ctx, dataHandlers } = makeCtxStub();
     registerData({ ctx, openclaw: oc as never, config: () => cfg });
     const result = (await dataHandlers.get(DATA_OPENCLAW_AGENTS)!({})) as { connected: boolean };
     expect(result.connected).toBe(false);
     expect(oc.rpc).not.toHaveBeenCalled();
+    // Down-state should also kick a non-blocking reconnect attempt.
+    expect(oc.ensureConnecting).toHaveBeenCalled();
   });
 
   it("openclaw-agents proxies agents.list when ws is open", async () => {
     const oc = {
       isOpen: () => true,
       rpc: vi.fn(async () => [{ name: "scout" }]),
+      ensureConnecting: vi.fn(),
     };
     const { ctx, dataHandlers } = makeCtxStub();
     registerData({ ctx, openclaw: oc as never, config: () => cfg });
@@ -117,5 +137,46 @@ describe("registerData", () => {
     };
     expect(result.connected).toBe(true);
     expect(result.agents).toEqual([{ name: "scout" }]);
+  });
+
+  it("openclaw-models returns the gateway's model catalog via listAvailableModels", async () => {
+    const oc = {
+      isOpen: () => true,
+      ensureConnecting: vi.fn(),
+      listAvailableModels: vi.fn(async () => [
+        "anthropic:claude-opus-4-7",
+        "anthropic:claude-sonnet-4-6",
+      ]),
+    };
+    const { ctx, dataHandlers } = makeCtxStub();
+    registerData({ ctx, openclaw: oc as never, config: () => cfg });
+    const result = (await dataHandlers.get(DATA_OPENCLAW_MODELS)!({})) as {
+      connected: boolean;
+      models: string[];
+    };
+    expect(result.connected).toBe(true);
+    expect(result.models).toEqual([
+      "anthropic:claude-opus-4-7",
+      "anthropic:claude-sonnet-4-6",
+    ]);
+    expect(oc.listAvailableModels).toHaveBeenCalled();
+  });
+
+  it("openclaw-models returns connected:false and kicks ensureConnecting when ws is down", async () => {
+    const oc = {
+      isOpen: () => false,
+      ensureConnecting: vi.fn(),
+      listAvailableModels: vi.fn(),
+    };
+    const { ctx, dataHandlers } = makeCtxStub();
+    registerData({ ctx, openclaw: oc as never, config: () => cfg });
+    const result = (await dataHandlers.get(DATA_OPENCLAW_MODELS)!({})) as {
+      connected: boolean;
+      models: string[];
+    };
+    expect(result.connected).toBe(false);
+    expect(result.models).toEqual([]);
+    expect(oc.ensureConnecting).toHaveBeenCalled();
+    expect(oc.listAvailableModels).not.toHaveBeenCalled();
   });
 });

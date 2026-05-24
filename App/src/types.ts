@@ -35,6 +35,7 @@ export const DEFAULT_CONFIG: BridgeConfig = {
   conflictPolicy: "newest-wins",
   autoSyncCron: "*/5 * * * *",
   healthCheckCron: "*/1 * * * *",
+  paperclipApiUrl: "http://127.0.0.1:3100",
 };
 
 export interface OpenClawAgentRecord {

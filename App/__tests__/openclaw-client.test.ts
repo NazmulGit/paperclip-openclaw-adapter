@@ -177,4 +177,69 @@ describe("OpenClawClient", () => {
     c.close();
     await new Promise<void>((resolve) => bad.server.close(() => resolve()));
   });
+
+  it("listAvailableModels returns [] when ws is not open (no throw)", async () => {
+    const c = new OpenClawClient({
+      url: gateway.url,
+      token: "x",
+      reconnect: { enabled: false },
+    });
+    // Don't connect — should short-circuit.
+    expect(c.isOpen()).toBe(false);
+    expect(await c.listAvailableModels()).toEqual([]);
+    c.close();
+  });
+
+  it("ensureConnecting is a no-op when already open", async () => {
+    client = new OpenClawClient({ url: gateway.url, token: "x", reconnect: { enabled: false } });
+    await client.connect();
+    // Should not throw and should not start a duplicate connect.
+    client.ensureConnecting();
+    expect(client.isOpen()).toBe(true);
+    client.close();
+    client = null;
+  });
+});
+
+describe("OpenClawClient.listAvailableModels — dedupe path", () => {
+  it("dedupes models pulled from agents.list when models.list isn't implemented", async () => {
+    // Custom mock: models.list returns error; agents.list returns 3 agents with
+    // two distinct models. listAvailableModels should produce a sorted, deduped list.
+    const server = new WebSocketServer({ port: 0, host: "127.0.0.1" });
+    await new Promise<void>((resolve) => server.on("listening", () => resolve()));
+    const addr = server.address();
+    const port = typeof addr === "object" && addr ? addr.port : 0;
+    server.on("connection", (ws) => {
+      setTimeout(
+        () => ws.send(JSON.stringify({ type: "event", event: "connect.challenge", payload: {} })),
+        5,
+      );
+      ws.on("message", (data) => {
+        const frame = JSON.parse(data.toString());
+        if (frame.type !== "req") return;
+        const send = (ok: boolean, payload?: unknown, error?: unknown) =>
+          ws.send(JSON.stringify({ type: "res", id: frame.id, ok, payload, error }));
+        if (frame.method === "connect") return send(true, { protocol: 4 });
+        if (frame.method === "models.list") return send(false, null, { code: "NOTSUP" });
+        if (frame.method === "agents.list") {
+          return send(true, [
+            { name: "a", model: "anthropic:claude-opus-4-7" },
+            { name: "b", model: "anthropic:claude-sonnet-4-6" },
+            { name: "c", model: "anthropic:claude-opus-4-7" },
+          ]);
+        }
+        send(false, null, { code: "X" });
+      });
+    });
+    const c = new OpenClawClient({
+      url: `ws://127.0.0.1:${port}`,
+      token: "x",
+      reconnect: { enabled: false },
+    });
+    await c.connect();
+    const models = await c.listAvailableModels();
+    expect(models).toEqual(["anthropic:claude-opus-4-7", "anthropic:claude-sonnet-4-6"]);
+    c.close();
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+  });
 });

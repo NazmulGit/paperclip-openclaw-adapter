@@ -1,7 +1,7 @@
 import type { PaperclipPluginManifestV1 } from "@paperclipai/plugin-sdk";
 
 export const PLUGIN_ID = "paperclipai.plugin-openclaw-bridge";
-export const PLUGIN_VERSION = "1.0.0";
+export const PLUGIN_VERSION = "1.1.0";
 
 export const SETTINGS_PAGE_SLOT_ID = "openclaw-bridge-settings";
 export const SETTINGS_PAGE_EXPORT = "SettingsPanel";
@@ -32,6 +32,7 @@ export const DATA_COMPANIES = "paperclip-companies";
 export const DATA_ALL_BINDINGS = "all-bindings";
 export const DATA_BOOTSTRAP_STATUS = "bootstrap-status";
 export const DATA_GATEWAY_CONFIG = "gateway-config";
+export const DATA_OPENCLAW_MODELS = "openclaw-models";
 
 /**
  * The number of managed-agent slots this plugin declares. Each discovered
@@ -129,6 +130,14 @@ const manifest: PaperclipPluginManifestV1 = {
         type: "string",
         title: "Health-check cron",
         default: "*/1 * * * *",
+      },
+      paperclipApiUrl: {
+        type: "string",
+        title: "Paperclip API URL",
+        description:
+          "Loopback URL for the local Paperclip API. The bridge PATCHes managed-agent rows here.",
+        default: "http://127.0.0.1:3100",
+        pattern: "^https?://",
       },
     },
   },

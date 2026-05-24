@@ -37,33 +37,44 @@ function makeCtx() {
 }
 
 describe("makeSyncJob", () => {
-  it("runs fullSync and logs success counts", async () => {
+  it("runs syncAllBound and logs success counts", async () => {
     const { ctx } = makeCtx();
     const sync = {
-      fullSync: vi.fn(async () => ({
-        rows: [{}, {}],
-        actions: [],
-        exportedToOpenClaw: ["a"],
-        exportFailures: [],
+      syncAllBound: vi.fn(async () => ({
+        companies: [
+          {
+            companyId: "c1",
+            rows: [{}, {}],
+            actions: [],
+            exportedToOpenClaw: ["a"],
+            exportFailures: [],
+            importedToPaperclip: [{ openclawName: "x", slotKey: "openclaw-slot-1", agentId: "a1" }],
+            importFailures: [],
+          },
+        ],
+        skipped: [],
       })),
     };
     await makeSyncJob({ ctx, sync: sync as never, config: () => cfg })(job);
-    expect(sync.fullSync).toHaveBeenCalled();
+    expect(sync.syncAllBound).toHaveBeenCalled();
     expect((ctx.logger.info as ReturnType<typeof vi.fn>).mock.calls[0]![0]).toBe(
       "openclaw-sync completed",
     );
   });
 
-  it("skips fullSync when companyId is missing", async () => {
+  it("still runs syncAllBound when configured companyId is missing (sweeps every bound company)", async () => {
     const { ctx } = makeCtx();
-    const sync = { fullSync: vi.fn() };
+    const sync = {
+      syncAllBound: vi.fn(async () => ({ companies: [], skipped: [] })),
+    };
     await makeSyncJob({ ctx, sync: sync as never, config: () => ({ ...cfg, companyId: null }) })(job);
-    expect(sync.fullSync).not.toHaveBeenCalled();
+    // Multi-binding sweep doesn't depend on the legacy single companyId.
+    expect(sync.syncAllBound).toHaveBeenCalled();
   });
 
-  it("logs error but does not throw when fullSync rejects", async () => {
+  it("logs error but does not throw when syncAllBound rejects", async () => {
     const { ctx } = makeCtx();
-    const sync = { fullSync: vi.fn(async () => { throw new Error("ws gone"); }) };
+    const sync = { syncAllBound: vi.fn(async () => { throw new Error("ws gone"); }) };
     await expect(
       makeSyncJob({ ctx, sync: sync as never, config: () => cfg })(job),
     ).resolves.toBeUndefined();

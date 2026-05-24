@@ -234,6 +234,56 @@ export class OpenClawClient {
     }
   }
 
+  /**
+   * Discover models supported by this OpenClaw gateway. Falls back to a
+   * deduped list pulled from `agents.list` when the gateway doesn't expose a
+   * dedicated `models.list` RPC (most current builds). Returns an empty list
+   * on connection failure rather than throwing — callers treat this as a
+   * "no opinion, use the default" signal.
+   */
+  async listAvailableModels(timeoutMs = 10_000): Promise<string[]> {
+    if (!this.isOpen()) return [];
+    try {
+      const direct = await this.rpc<unknown>("models.list", {}, { timeoutMs });
+      const arr = Array.isArray(direct)
+        ? direct
+        : Array.isArray((direct as { models?: unknown[] } | null)?.models)
+          ? ((direct as { models: unknown[] }).models)
+          : null;
+      if (arr) {
+        const out = new Set<string>();
+        for (const m of arr) {
+          if (typeof m === "string") out.add(m);
+          else if (m && typeof m === "object" && typeof (m as { id?: unknown }).id === "string") {
+            out.add((m as { id: string }).id);
+          }
+        }
+        if (out.size > 0) return [...out].sort();
+      }
+    } catch {
+      // method may not exist on older gateways — fall through to agents.list.
+    }
+    try {
+      const roster = await this.rpc<unknown>("agents.list", {}, { timeoutMs });
+      const list = Array.isArray(roster)
+        ? roster
+        : Array.isArray((roster as { agents?: unknown[] } | null)?.agents)
+          ? ((roster as { agents: unknown[] }).agents)
+          : [];
+      const out = new Set<string>();
+      for (const item of list) {
+        if (!item || typeof item !== "object") continue;
+        const a = item as Record<string, unknown>;
+        if (typeof a.model === "string" && a.model.length > 0) out.add(a.model);
+        const sub = a.model as { primary?: unknown } | undefined;
+        if (sub && typeof sub.primary === "string" && sub.primary.length > 0) out.add(sub.primary);
+      }
+      return [...out].sort();
+    } catch {
+      return [];
+    }
+  }
+
   close(): void {
     this.closed = true;
     this.stopKeepalive();

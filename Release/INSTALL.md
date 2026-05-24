@@ -96,5 +96,5 @@ Set its runtime config:
 
 ## Versions
 
-- `opencalw_adapter_for_paperclip@1.0.0` (PC plugin, Paperclip SDK 2026.517.0)
+- `opencalw_adapter_for_paperclip@1.1.0` (PC plugin, Paperclip SDK 2026.517.0)
 - `paperclip_adapter_for_opencalw@0.1.0` (OC plugin scaffold, OpenClaw gateway protocol v4)
