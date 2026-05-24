@@ -2,7 +2,7 @@
 //
 // Registers a `paperclip` tool family so OpenClaw agents can call Paperclip
 // from inside a session without writing raw fetch / Bearer-token boilerplate.
-// Pairs with the Paperclip-side plugin paperclip-plugin-openclaw-bridge.
+// Pairs with the Paperclip-side plugin paperclip-openclaw-bridge.
 //
 // Build:    pnpm build  (or tsc)
 // Install:  openclaw plugins install ./

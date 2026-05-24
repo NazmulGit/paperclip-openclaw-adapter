@@ -208,7 +208,7 @@ describe("e2e: real built worker over JSON-RPC", () => {
     try {
       // 1. initialize → triggers setup(ctx) which connects to OpenClaw.
       const init = (await h.call("initialize", {
-        manifest: { id: "paperclipai.plugin-openclaw-bridge", apiVersion: 1 },
+        manifest: { id: "openclaw-bridge", apiVersion: 1 },
         config: {
           openclawUrl: `ws://127.0.0.1:${port}`,
           openclawToken: "this-is-a-real-token-1234567",

@@ -1,10 +1,10 @@
-# Community plugin: opencalw_adapter_for_paperclip — Paperclip ↔ OpenClaw bridge
+# Community plugin: paperclip-openclaw-bridge — Paperclip ↔ OpenClaw bridge
 
 (Draft of the issue I'll open on `paperclipai/paperclip` once the user okays the GitHub push.)
 
 ---
 
-**Title:** Community plugin — opencalw_adapter_for_paperclip (Paperclip ↔ OpenClaw bridge)
+**Title:** Community plugin — paperclip-openclaw-bridge (Paperclip ↔ OpenClaw bridge)
 
 **Body:**
 
@@ -12,7 +12,7 @@ Hi Paperclip team & community,
 
 I've published a community plugin that bridges Paperclip with an OpenClaw Gateway end-to-end, so issues assigned in Paperclip flow into OpenClaw agents, get processed by Claude, and come back as comments + status changes.
 
-**Repo:** https://github.com/NazmulGit/paperclip-openclaw-adapter
+**Repo:** https://github.com/NazmulGit/paperclip-openclaw-bridge
 
 **License:** MIT
 
@@ -32,8 +32,8 @@ Heavy stress test (this repo's `Others/scripts/stress-tasks.json`):
 
 ### Where it lives
 
-- PC plugin (this repo): `opencalw_adapter_for_paperclip` — installed into `~/.paperclip/plugins/`
-- OC plugin scaffold: `paperclip_adapter_for_opencalw` — adds a typed `paperclip.*` tool inside OpenClaw. V2 work.
+- PC plugin (this repo): `paperclip-openclaw-bridge` — installed into `~/.paperclip/plugins/`
+- OC plugin scaffold: `openclaw-paperclip-bridge` — adds a typed `paperclip.*` tool inside OpenClaw. V2 work.
 
 ### Known V1 limitations (documented in the repo)
 

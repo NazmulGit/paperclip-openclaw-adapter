@@ -1,7 +1,7 @@
 {
-  "name": "paperclip_adapter_for_opencalw",
-  "version": "0.1.0",
-  "description": "Paperclip adapter for OpenClaw. Registers a paperclip.* tool family so OC agents can comment, close, and create Paperclip issues without raw fetch boilerplate.",
+  "name": "openclaw-paperclip-bridge",
+  "version": "0.2.0",
+  "description": "OpenClaw ↔ Paperclip bridge plugin (OC side). Registers a paperclip.* tool family so OC agents can comment, close, and create Paperclip issues without raw fetch boilerplate.",
   "type": "module",
   "main": "dist/index.js",
   "files": [

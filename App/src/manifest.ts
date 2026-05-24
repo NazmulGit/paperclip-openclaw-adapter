@@ -1,7 +1,7 @@
 import type { PaperclipPluginManifestV1 } from "@paperclipai/plugin-sdk";
 
-export const PLUGIN_ID = "paperclipai.plugin-openclaw-bridge";
-export const PLUGIN_VERSION = "1.1.0";
+export const PLUGIN_ID = "openclaw-bridge";
+export const PLUGIN_VERSION = "2.0.0";
 
 export const SETTINGS_PAGE_SLOT_ID = "openclaw-bridge-settings";
 export const SETTINGS_PAGE_EXPORT = "SettingsPanel";
@@ -56,7 +56,7 @@ const manifest: PaperclipPluginManifestV1 = {
   id: PLUGIN_ID,
   apiVersion: 1,
   version: PLUGIN_VERSION,
-  displayName: "OpenClaw Bridge",
+  displayName: "Paperclip ↔ OpenClaw Bridge",
   description:
     "Bidirectional sync between Paperclip and an OpenClaw Gateway. Discover OpenClaw agents, surface ambient events into Paperclip tasks, and stream Paperclip activity back to OpenClaw.",
   author: "Adapter Builder Project",
@@ -189,7 +189,7 @@ const manifest: PaperclipPluginManifestV1 = {
     title: "OpenClaw bridge agent",
     role: "general",
     adapterType: OPENCLAW_ADAPTER_TYPE,
-    capabilities: "Bridged from an OpenClaw gateway by paperclipai.plugin-openclaw-bridge.",
+    capabilities: "Bridged from an OpenClaw gateway by the paperclip-openclaw-bridge plugin.",
     status: "paused" as const,
   })),
 };

@@ -1,8 +1,8 @@
-# openclaw-plugin-paperclip-bridge
+# openclaw-paperclip-bridge
 
 OpenClaw plugin that gives agents a `paperclip` tool for talking to Paperclip — commenting on issues, changing status, opening follow-ups, without writing raw fetch boilerplate.
 
-Pairs with the Paperclip-side plugin `paperclip-plugin-openclaw-bridge` in `App/`.
+Pairs with the Paperclip-side plugin `paperclip-openclaw-bridge` in `App/`.
 
 ## Status
 

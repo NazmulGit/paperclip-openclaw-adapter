@@ -12,9 +12,9 @@ Assign a Paperclip issue to a bridged agent → OpenClaw spawns the agent → Cl
 
 ```
 ┌─────────────┐  issue.assign     ┌──────────────────────┐
-│  Paperclip  │ ────────────────▶ │  opencalw_adapter_   │
-│  (PC) UI    │                   │  for_paperclip       │
-│             │  ◀ comment+close  │  (this repo, PC side) │
+│  Paperclip  │ ────────────────▶ │  paperclip-openclaw- │
+│  (PC) UI    │                   │  bridge              │
+│             │  ◀ comment+close  │  (this repo, PC side)│
 └──────┬──────┘                   └──────────┬───────────┘
        │                                     │ ws://...:18789
        │                                     ▼
@@ -40,7 +40,7 @@ Heavy test from this repo's verification run (2026-05-23):
 
 ## Two adapters in this repo
 
-### `opencalw_adapter_for_paperclip` (PC side, **v1.0.0** — stable)
+### `paperclip-openclaw-bridge` (PC side, **v2.0.0** — stable, was `opencalw_adapter_for_paperclip` through v1.x)
 
 A Paperclip plugin installed into `~/.paperclip/plugins/`. Adds:
 
@@ -50,9 +50,9 @@ A Paperclip plugin installed into `~/.paperclip/plugins/`. Adds:
 - **Auto-fill `adapterConfig`** — agents created via Paperclip's New Agent picker get the gateway URL + token patched in automatically on the next sync
 - **Continuous health/sync** — WebSocket keepalive every 25 s, exponential-backoff reconnect, scheduled sync every 5 min
 
-Source: [`App/`](App/) · Release: [`Release/opencalw_adapter_for_paperclip/`](Release/opencalw_adapter_for_paperclip/)
+Source: [`App/`](App/) · Release: [`Release/paperclip-openclaw-bridge/`](Release/paperclip-openclaw-bridge/)
 
-### `paperclip_adapter_for_opencalw` (OC side, **v0.1.0 scaffold**)
+### `openclaw-paperclip-bridge` (OC side, **v0.2.0 scaffold**, was `paperclip_adapter_for_opencalw`)
 
 An OpenClaw plugin installed via `openclaw plugins install`. Adds a typed `paperclip` tool to OC agents:
 
@@ -65,9 +65,9 @@ An OpenClaw plugin installed via `openclaw plugins install`. Adds a typed `paper
 
 Plus a `SKILL.md` so OC agents know when and how to call the tool. Scaffold-only in V1 — manifest, tool, and skill are wired; install path needs validation against a running OC.
 
-Source: [`OpenClawPlugin/`](OpenClawPlugin/) · Release: [`Release/paperclip_adapter_for_opencalw/`](Release/paperclip_adapter_for_opencalw/)
+Source: [`OpenClawPlugin/`](OpenClawPlugin/) · Release: [`Release/openclaw-paperclip-bridge/`](Release/openclaw-paperclip-bridge/)
 
-**Canonical repo for the OC side:** https://github.com/NazmulGit/paperclip-adapter-for-opencalw — published as its own GitHub repo so OpenClaw users can find it via OC-side search. The `OpenClawPlugin/` folder here is the vendored copy used during co-development; both stay in sync at release time.
+**Canonical repo for the OC side:** https://github.com/NazmulGit/openclaw-paperclip-bridge — published as its own GitHub repo so OpenClaw users can find it via OC-side search. The `OpenClawPlugin/` folder here is the vendored copy used during co-development; both stay in sync at release time.
 
 ## Quick install (5 minutes)
 
@@ -78,8 +78,8 @@ Source: [`OpenClawPlugin/`](OpenClawPlugin/) · Release: [`Release/paperclip_ada
 #   - openclaw config get gateway.auth.token   (copy the token)
 
 # 1. Install the PC plugin
-cd Release\opencalw_adapter_for_paperclip
-$dest = "$env:USERPROFILE\.paperclip\plugins\opencalw_adapter_for_paperclip"
+cd Release\paperclip-openclaw-bridge
+$dest = "$env:USERPROFILE\.paperclip\plugins\paperclip-openclaw-bridge"
 New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null
 Copy-Item -Path "$PWD\*" -Destination $dest -Recurse -Force
 

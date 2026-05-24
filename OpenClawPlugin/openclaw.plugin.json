@@ -1,7 +1,7 @@
 {
   "id": "paperclip-bridge",
   "name": "Paperclip Bridge",
-  "description": "Lets OpenClaw agents report progress, post comments, and create issues in Paperclip without writing raw fetch boilerplate. Pairs with paperclip-plugin-openclaw-bridge on the Paperclip side.",
+  "description": "Lets OpenClaw agents report progress, post comments, and create issues in Paperclip without writing raw fetch boilerplate. Pairs with paperclip-openclaw-bridge on the Paperclip side.",
   "activation": {
     "onStartup": true
   },
@@ -21,7 +21,7 @@
     },
     "apiKey": {
       "label": "Paperclip API Key",
-      "help": "Long-lived Paperclip agent API key. The paperclip-plugin-openclaw-bridge's 'Bootstrap PC credentials' button generates one per agent; paste the value that corresponds to THIS OpenClaw instance."
+      "help": "Long-lived Paperclip agent API key. The paperclip-openclaw-bridge plugin's 'Bootstrap PC credentials' button generates one per agent; paste the value that corresponds to THIS OpenClaw instance."
     },
     "defaultCompanyId": {
       "label": "Default Company ID",

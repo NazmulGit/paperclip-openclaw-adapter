@@ -1,7 +1,7 @@
 {
-  "name": "opencalw_adapter_for_paperclip",
-  "version": "1.1.0",
-  "description": "OpenClaw adapter for Paperclip. Bidirectional sync between Paperclip and an OpenClaw Gateway: agent discovery, ambient event surfacing, wizard-style config.",
+  "name": "paperclip-openclaw-bridge",
+  "version": "2.0.0",
+  "description": "Paperclip ↔ OpenClaw bridge plugin. Bidirectional sync between Paperclip and an OpenClaw Gateway: agent discovery, ambient event surfacing, wizard-style config.",
   "type": "module",
   "private": true,
   "license": "MIT",

@@ -7,7 +7,7 @@ Thanks for thinking about contributing.
 ```bash
 # Clone
 git clone <repo-url>
-cd opencalw-paperclip-bridge
+cd paperclip-openclaw-bridge
 
 # PC plugin
 cd App
@@ -27,7 +27,7 @@ You need Node 20+ and pnpm.
 
 1. Start Paperclip locally (`npx paperclipai run` or your normal flow).
 2. Start OpenClaw gateway (`openclaw gateway run`).
-3. Symlink (or copy) `App/` into `~/.paperclip/plugins/opencalw_adapter_for_paperclip/`.
+3. Symlink (or copy) `App/` into `~/.paperclip/plugins/paperclip-openclaw-bridge/`.
 4. Edit code in `App/src/...`.
 5. `pnpm build` to recompile. The plugin worker restarts automatically when Paperclip sees the new files (may require kill + respawn — see below).
 6. For UI changes, hard-refresh the Paperclip settings page after a build (the bundled UI is cached).
@@ -38,7 +38,7 @@ Paperclip caches the worker process. After a build:
 
 ```powershell
 Get-CimInstance Win32_Process -Filter "Name='node.exe'" |
-  Where-Object { $_.CommandLine -match "opencalw_adapter_for_paperclip.*dist[\\\/]worker\.js" } |
+  Where-Object { $_.CommandLine -match "paperclip-openclaw-bridge.*dist[\\\/]worker\.js" } |
   Stop-Process -Force
 ```
 

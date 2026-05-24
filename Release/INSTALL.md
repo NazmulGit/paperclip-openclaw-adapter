@@ -4,8 +4,8 @@ Two adapters. Install the Paperclip-side one (required) and, optionally, the Ope
 
 | Side | Folder | What it does |
 |---|---|---|
-| Paperclip | `opencalw_adapter_for_paperclip/` | OpenClaw adapter installed **into Paperclip**. Discovers OC agents, mirrors them, runs sync, mints PC API keys for OC use. |
-| OpenClaw | `paperclip_adapter_for_opencalw/` | Paperclip adapter installed **into OpenClaw**. Scaffolds a `paperclip.*` tool for OC agents (V2). |
+| Paperclip | `paperclip-openclaw-bridge/` | OpenClaw adapter installed **into Paperclip**. Discovers OC agents, mirrors them, runs sync, mints PC API keys for OC use. |
+| OpenClaw | `openclaw-paperclip-bridge/` | Paperclip adapter installed **into OpenClaw**. Scaffolds a `paperclip.*` tool for OC agents (V2). |
 
 ## Prereqs
 
@@ -18,10 +18,10 @@ Two adapters. Install the Paperclip-side one (required) and, optionally, the Ope
 
 ```powershell
 # From this Release/ folder
-cd opencalw_adapter_for_paperclip
+cd paperclip-openclaw-bridge
 
 # Paperclip discovers plugins from ~/.paperclip/plugins. Copy or symlink there:
-$dest = Join-Path $env:USERPROFILE ".paperclip\plugins\opencalw_adapter_for_paperclip"
+$dest = Join-Path $env:USERPROFILE ".paperclip\plugins\paperclip-openclaw-bridge"
 New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null
 Copy-Item -Path "$PWD\*" -Destination $dest -Recurse -Force
 ```
@@ -71,7 +71,7 @@ Confirmed working: TES-13 closed in 20 s with the marker comment.
 If you want OpenClaw agents to call Paperclip via a typed `paperclip` tool instead of raw fetch:
 
 ```powershell
-cd ..\paperclip_adapter_for_opencalw
+cd ..\openclaw-paperclip-bridge
 openclaw plugins install .\
 openclaw plugins enable paperclip-bridge
 openclaw plugins inspect paperclip-bridge --runtime
@@ -82,7 +82,7 @@ Set its runtime config:
 - `apiKey`: a key from step 4 (one of the per-agent keys)
 - `defaultCompanyId`: your Paperclip company ID (optional)
 
-**Scaffold only** in V1 — manifest + tool + skill ready, install path not yet validated against a running OC. See `paperclip_adapter_for_opencalw/README.md`.
+**Scaffold only** in V1 — manifest + tool + skill ready, install path not yet validated against a running OC. See `openclaw-paperclip-bridge/README.md`.
 
 ## Troubleshooting
 
@@ -96,5 +96,5 @@ Set its runtime config:
 
 ## Versions
 
-- `opencalw_adapter_for_paperclip@1.1.0` (PC plugin, Paperclip SDK 2026.517.0)
-- `paperclip_adapter_for_opencalw@0.1.0` (OC plugin scaffold, OpenClaw gateway protocol v4)
+- `paperclip-openclaw-bridge@2.0.0` (PC plugin, Paperclip SDK 2026.517.0)
+- `openclaw-paperclip-bridge@0.2.0` (OC plugin scaffold, OpenClaw gateway protocol v4)

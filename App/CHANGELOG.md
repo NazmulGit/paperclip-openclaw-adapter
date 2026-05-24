@@ -1,5 +1,42 @@
 # Changelog
 
+## 2.0.0 — 2026-05-24
+
+**Rename release.** No functional changes vs v1.1.0; this is the v1.x codebase under a clearer, symmetric name. Drop-in if you uninstall v1.x first (plugin id changed → PC sees v2 as a new plugin and won't migrate state).
+
+### Renamed
+
+| Surface | Before (v1.x) | After (v2.0.0) |
+|---|---|---|
+| npm package | `opencalw_adapter_for_paperclip` | `paperclip-openclaw-bridge` |
+| Plugin id (PC manifest) | `paperclipai.plugin-openclaw-bridge` | `openclaw-bridge` |
+| Display name | `OpenClaw Bridge` | `Paperclip ↔ OpenClaw Bridge` |
+| Install path | `~/.paperclip/plugins/opencalw_adapter_for_paperclip/` | `~/.paperclip/plugins/paperclip-openclaw-bridge/` |
+| Release zip | `opencalw_adapter_for_paperclip-1.1.0.zip` | `paperclip-openclaw-bridge-2.0.0.zip` |
+| GitHub repo | `paperclip-openclaw-adapter` | `paperclip-openclaw-bridge` (GitHub 301-redirects the old URL) |
+
+The OC-side companion was renamed in parallel: package `paperclip_adapter_for_opencalw` → `openclaw-paperclip-bridge`; repo `paperclip-adapter-for-opencalw` → `openclaw-paperclip-bridge`.
+
+### Why
+
+The v1.x names had two problems: a typo (`opencalw` instead of `openclaw`) baked into the package id, and the word "adapter" overloaded with Paperclip core's separate `ServerAdapterModule` concept. The symmetric `<host>-<other>-bridge` scheme avoids both and makes which side runs where obvious from the name alone.
+
+### Migration
+
+```powershell
+# 1. Uninstall the old plugin from Paperclip
+#    Instance settings → Plugins → opencalw_adapter_for_paperclip → Uninstall
+# 2. Remove the old install dir (optional, just for tidiness)
+Remove-Item -Recurse -Force "$env:USERPROFILE\.paperclip\plugins\opencalw_adapter_for_paperclip"
+# 3. Install v2.0.0 to the new path
+$dest = "$env:USERPROFILE\.paperclip\plugins\paperclip-openclaw-bridge"
+New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null
+Expand-Archive -Path .\paperclip-openclaw-bridge-2.0.0.zip -DestinationPath $dest -Force
+# 4. Re-enable in Paperclip → re-paste OpenClaw token → re-run Bootstrap PC credentials
+```
+
+Existing bindings, slot assignments, and bootstrap state do NOT carry over — PC keys them by plugin id, which changed. The cost is a 2-minute re-run of the wizard (described in the [Quick Start Notion guide](https://www.notion.so/36a0a400d344810c82c3f7ea2ed9f2d7)).
+
 ## 1.1.0 — 2026-05-24
 
 Polishing pass after the v1.0.0 public release. Focused on closing the gap between the production code and its test suite, smarter defaults for cross-system fields, and surfacing the gateway's model catalog to the UI so operators don't have to memorize model ids.

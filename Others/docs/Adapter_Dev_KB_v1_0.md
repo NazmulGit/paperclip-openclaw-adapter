@@ -1,6 +1,6 @@
 # Adapter Developer KB — Paperclip ↔ OpenClaw (v1.0)
 
-Practical knowledge extracted from building `opencalw_adapter_for_paperclip` and `paperclip_adapter_for_opencalw` end-to-end. These are the real-world lessons, gotchas, and patterns that the upstream KBs don't cover. Use this alongside `Paperclip_KB_v2_0_0.md` and `OpenClaw_KB_v2_0_0.md`.
+Practical knowledge extracted from building `paperclip-openclaw-bridge` and `openclaw-paperclip-bridge` end-to-end. These are the real-world lessons, gotchas, and patterns that the upstream KBs don't cover. Use this alongside `Paperclip_KB_v2_0_0.md` and `OpenClaw_KB_v2_0_0.md`.
 
 ---
 
@@ -461,7 +461,7 @@ pnpm test         # vitest
 
 ### Install into local PC (development)
 ```powershell
-$dest = "$env:USERPROFILE\.paperclip\plugins\opencalw_adapter_for_paperclip"
+$dest = "$env:USERPROFILE\.paperclip\plugins\paperclip-openclaw-bridge"
 New-Item -ItemType Directory -Force -Path $dest | Out-Null
 Copy-Item -Path ".\App\dist"         -Destination "$dest\dist"         -Recurse -Force
 Copy-Item -Path ".\App\package.json" -Destination "$dest\package.json" -Force
@@ -476,8 +476,8 @@ Look in PC's worker process log stream. Plugin stdout/stderr is captured there. 
 ### Package for distribution
 ```powershell
 # From Release/ folder
-Compress-Archive -Path ".\opencalw_adapter_for_paperclip\*" `
-  -DestinationPath ".\opencalw_adapter_for_paperclip-1.0.0.zip" -Force
+Compress-Archive -Path ".\paperclip-openclaw-bridge\*" `
+  -DestinationPath ".\paperclip-openclaw-bridge-1.0.0.zip" -Force
 ```
 
 Include: `dist/`, `package.json`. Exclude: `node_modules/`, `src/`, `*.tsbuildinfo`.
@@ -546,7 +546,7 @@ These patterns were identified during V1 but deferred:
 |---|---|---|
 | Per-slot display names | `agents.update` SDK call | Not in SDK 2026.517.0 |
 | Full 12-field OC config at agent create time | PC NewAgentDialog hook or upstream patch | Hardcoded simplified form in PC UI |
-| OC → PC push (session finish → PC issue) | OC-side channel plugin v2 | `paperclip_adapter_for_opencalw` scaffold ready |
+| OC → PC push (session finish → PC issue) | OC-side channel plugin v2 | `openclaw-paperclip-bridge` scaffold ready |
 | Multi-gateway per PC company | Multiple WS clients, disambiguated state keys | V1 intentionally one-to-one |
 | Pre-warm sessions at sync time | Send a no-op message to each agent slot at sync | Side effect: uses OC credits |
 | Smaller wake prompt for heartbeat-only tasks | Separate slim `payloadTemplate` per task type | Requires issue-type metadata at assign time |
